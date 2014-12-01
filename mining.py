@@ -97,8 +97,3 @@ def read_json_from_file(file_name):
         file_contents = file_handle.read()
 
     return json.loads(file_contents)
-
-
-print(six_best_months(read_stock_data("TSE-SO", "data/TSE-SO.json")))
-print(six_worst_months(read_stock_data("TSE-SO", "data/TSE-SO.json")))
-
