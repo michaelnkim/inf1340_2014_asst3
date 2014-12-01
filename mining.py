@@ -10,8 +10,7 @@ which reads Stock Json file and calculates avereage prices of a stock, and retur
 import json
 import datetime
 
-stock_data = []
-monthly_averages = []
+
 
 
 def read_stock_data(stock_name, stock_file_name):
@@ -21,35 +20,33 @@ def read_stock_data(stock_name, stock_file_name):
     :param stock_file_name:
     :return:
     """
-    xample = []
     month = ""
-    list_stock_data = read_json_from_file(stock_file_name)
-    test_list = []
-    for stock_data in (list_stock_data):
-        date_value = stock_data.get("Date")
+    stock_data = []
+    monthly_averages = []
+    list_stock = read_json_from_file(stock_file_name)
+    for stock in (list_stock):
+        date_value = stock.get("Date")
         if date_value[0:7] == month:
-            test_list.append(stock_data)
-            print("append")
-        elif not test_list:
+            stock_data.append(stock)
+        elif not stock_data:
             month = date_value[0:7]
-            test_list.append(stock_data)
-            print("begining")
+            stock_data.append(stock)
         else:
-            xample.append(average_calculation(test_list))
-            test_list = []
+            monthly_averages.append(average_calculation(stock_data))
+            stock_data = []
             month = date_value[0:7]
-            test_list.append(stock_data)
-            print("vds")
-    return xample
+            stock_data.append(stock)
+    return monthly_averages
 
 
-def six_best_months():
-    return [('', 0.0), ('', 0.0), ('', 0.0), ('', 0.0), ('', 0.0), ('', 0.0)]
+def six_best_months(list_tupules):
+    sorted_list = sorted(list_tupules, key= lambda average: average[1], reverse= True)
+    return sorted_list[0:6]
 
 
-def six_worst_months():
-    return [('', 0.0), ('', 0.0), ('', 0.0), ('', 0.0), ('', 0.0), ('', 0.0)]
-
+def six_worst_months(list_tupules):
+    sorted_list = sorted(list_tupules, key= lambda average: average[1])
+    return sorted_list[0:6]
 
 def average_calculation(stocklist):
     """
@@ -66,8 +63,9 @@ def average_calculation(stocklist):
         total_volume += volume_date
         total_sale += total_sale_date
     average_calculated = total_sale / total_volume
+    average_rounded = round(average_calculated, 2)
     date_month = stocklist[0].get("Date")
-    average_month = (average_calculated, date_month[0:7])
+    average_month = (date_month[0:7], average_rounded)
     return average_month
 
 def read_json_from_file(file_name):
@@ -77,5 +75,6 @@ def read_json_from_file(file_name):
     return json.loads(file_contents)
 
 
-print(read_stock_data("GOOG", "data/GOOG.json"))
+print(six_best_months(read_stock_data("TSE-SO", "data/TSE-SO.json")))
+print(six_worst_months(read_stock_data("TSE-SO", "data/TSE-SO.json")))
 
