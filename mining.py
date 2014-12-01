@@ -21,10 +21,26 @@ def read_stock_data(stock_name, stock_file_name):
     :param stock_file_name:
     :return:
     """
-
-
-    return
-
+    xample = []
+    month = ""
+    list_stock_data = read_json_from_file(stock_file_name)
+    test_list = []
+    for stock_data in (list_stock_data):
+        date_value = stock_data.get("Date")
+        if date_value[0:7] == month:
+            test_list.append(stock_data)
+            print("append")
+        elif not test_list:
+            month = date_value[0:7]
+            test_list.append(stock_data)
+            print("begining")
+        else:
+            xample.append(average_calculation(test_list))
+            test_list = []
+            month = date_value[0:7]
+            test_list.append(stock_data)
+            print("vds")
+    return xample
 
 
 def six_best_months():
@@ -35,41 +51,24 @@ def six_worst_months():
     return [('', 0.0), ('', 0.0), ('', 0.0), ('', 0.0), ('', 0.0), ('', 0.0)]
 
 
-def organize_month(stock_file_name):
+def average_calculation(stocklist):
     """
-
-    :param stock_file_name: List of Tupules
-    :return:List of List of Tupules
+    Function that calculates the average of stock sales per months
+    :param stocklist: list that contains stock data list
+    :return: tupule with average calculated and month
     """
-    xample = []
-    month = ""
-    for stock_data in (stock_file_name):
-        date_value = stock_data.get("Date")
-        test_list = []
-        if date_value[0:7] == month:
-            test_list.append(stock_data)
-        else:
-            #xample.append(calculate_average(test_list))
-            test_list = []
-            month = date_value[0:7]
-        print (stock_data)
-        print(xample)
-
-
-
-
-"""def average_calcuation(list):
-    ""
-
-    :param list: list
-    :return: value
-    ""
-    for stockdata_date in read_json_from_file(stock_file_name):
-        volume_date = stockdata_date.get("Volume")
-        close_date = stockdata_date.get("Close")
-        totalsale_date = float(volume_date) * float(close_date)
-"""
-
+    total_volume = 0.0
+    total_sale = 0.0
+    for stockdata in stocklist:
+        volume_date = stockdata.get("Volume")
+        close_date = stockdata.get("Close")
+        total_sale_date = float(volume_date) * float(close_date)
+        total_volume += volume_date
+        total_sale += total_sale_date
+    average_calculated = total_sale / total_volume
+    date_month = stocklist[0].get("Date")
+    average_month = (average_calculated, date_month[0:7])
+    return average_month
 
 def read_json_from_file(file_name):
     with open(file_name) as file_handle:
@@ -77,5 +76,6 @@ def read_json_from_file(file_name):
 
     return json.loads(file_contents)
 
-organize_month(read_json_from_file("data/GOOG.json"))
+
+print(read_stock_data("GOOG", "data/GOOG.json"))
 
