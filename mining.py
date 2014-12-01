@@ -24,6 +24,7 @@ def read_stock_data(stock_name, stock_file_name):
     stock_data = []
     monthly_averages = []
     list_stock = read_json_from_file(stock_file_name)
+
     for stock in (list_stock):
         date_value = stock.get("Date")
         if date_value[0:7] == month:
@@ -36,16 +37,19 @@ def read_stock_data(stock_name, stock_file_name):
             stock_data = []
             month = date_value[0:7]
             stock_data.append(stock)
+
     return monthly_averages
 
 
 def six_best_months(list_tupules):
     sorted_list = sorted(list_tupules, key= lambda average: average[1], reverse= True)
+
     return sorted_list[0:6]
 
 
 def six_worst_months(list_tupules):
     sorted_list = sorted(list_tupules, key= lambda average: average[1])
+
     return sorted_list[0:6]
 
 def average_calculation(stocklist):
@@ -62,10 +66,12 @@ def average_calculation(stocklist):
         total_sale_date = float(volume_date) * float(close_date)
         total_volume += volume_date
         total_sale += total_sale_date
+
     average_calculated = total_sale / total_volume
     average_rounded = round(average_calculated, 2)
     date_month = stocklist[0].get("Date")
     average_month = (date_month[0:7], average_rounded)
+
     return average_month
 
 def read_json_from_file(file_name):
